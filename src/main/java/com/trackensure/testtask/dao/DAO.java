@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.*;
 
 public abstract class DAO<T> {
-    private final String jdbcURL = "jdbc:mysql://localhost:3306/webchat";
+    private final String jdbcURL = "jdbc:mysql://localhost:3306/webchat?createDatabaseIfNotExist=true";
     private final String jdbcUsername = "root";
     private final String jdbcPassword = "root";
 
