@@ -7,9 +7,12 @@ window.onload = function() {
         const messageText = message.text;
         addMessage(authorName, messageText);
     };
-    document.getElementById("message-form").addEventListener('submit', function () {
+    document.getElementById("message-form").addEventListener('submit', closeSocket);
+    document.getElementById("refresh-form").addEventListener('submit', closeSocket);
+
+    function closeSocket() {
         socket.close();
-    });
+    }
 }
 
 function addMessage(author, message) {

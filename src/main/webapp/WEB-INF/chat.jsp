@@ -11,7 +11,7 @@
 <body>
 <div class="container">
     <div class="col-4 offset-4 mt-5">
-        <form method="post">
+        <form id="refresh-form" method="post">
             <input type="hidden" name="name" value="<%=request.getParameter("name")%>">
             <input class="form-control" type="submit" value="Refresh">
         </form>
