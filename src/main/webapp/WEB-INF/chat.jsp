@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Log in to chat</title>
+    <title>Chat</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/chat.css" />
 </head>
@@ -20,7 +20,7 @@
             <p><%=message.getAuthor().getName() + ": " + message.getText()%></p>
             <% } %>
         </div>
-        <form method="post" class="mt-2">
+        <form id="message-form" method="post" class="mt-2">
             <div class="row">
                 <div class="col-9">
                     <input type="text" name="text" class="form-control">
@@ -34,12 +34,6 @@
     </div>
 </div>
 <script>
-function scrollChatToBottom() {
-    let objDiv = document.getElementById("chat-box");
-    objDiv.scrollTop = objDiv.scrollHeight;
-}
-scrollChatToBottom();
-
 let websocketURL = "<%="ws://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/websocket"%>";
 </script>
 <script src="${pageContext.request.contextPath}/static/js/websocket.js"></script>

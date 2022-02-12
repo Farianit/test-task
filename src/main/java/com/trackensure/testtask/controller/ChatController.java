@@ -42,7 +42,7 @@ public class ChatController extends HttpServlet {
         }
 
         MessageDAO messageDAO = new MessageDAO();
-        Set<Message> messages = messageDAO.getAll(50, "sent_time");
+        Set<Message> messages = messageDAO.getAll(50, "sent_time DESC");
         req.setAttribute("messages", messages);
         req.getRequestDispatcher(PAGE).forward(req, resp);
     }

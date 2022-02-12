@@ -3,6 +3,8 @@
     border: solid 1px black;
     border-radius: 5px;
     overflow: scroll;
+    display: flex;
+    flex-direction: column-reverse;
 }
 #chat-box p {
     margin-bottom: 0.25rem;

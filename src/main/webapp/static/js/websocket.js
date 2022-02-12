@@ -1,8 +1,5 @@
 window.onload = function() {
     let socket = new WebSocket(websocketURL);
-    socket.onopen = function(){
-        console.log("Web socket open");
-    };
     socket.onmessage = function (data) {
         const messageJSON = data.data;
         const message = JSON.parse(messageJSON);
@@ -10,10 +7,12 @@ window.onload = function() {
         const messageText = message.text;
         addMessage(authorName, messageText);
     };
+    document.getElementById("message-form").addEventListener('submit', function () {
+        socket.close();
+    });
 }
 
 function addMessage(author, message) {
     const chatBox = document.getElementById('chat-box');
-    chatBox.insertAdjacentHTML('beforeend',`<p>${author}: ${message}</p>`);
-    scrollChatToBottom();
+    chatBox.insertAdjacentHTML('afterbegin',`<p>${author}: ${message}</p>`);
 }
