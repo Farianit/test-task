@@ -8,16 +8,6 @@ public class Message {
     private User author;
     private String text;
 
-    @Override
-    public String toString() {
-        return "Message{" +
-                "id=" + id +
-                ", author=" + author +
-                ", text='" + text + '\'' +
-                ", sentTime=" + sentTime +
-                '}';
-    }
-
     private Timestamp sentTime;
 
     public Message(int id, User author, String message, Timestamp sentTime) {
