@@ -29,6 +29,12 @@ public class UserDAO extends DAO<User> {
         return params;
     }
 
+
+    /**
+     * Find user from database or create if it doesn't exist
+     * @param name Username
+     * @return Found or created user
+     */
     public User createOrGetUserByName(String name) {
         User result = findOne("name", name);
         if (result == null) {

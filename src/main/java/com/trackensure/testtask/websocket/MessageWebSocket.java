@@ -12,13 +12,17 @@ import java.util.Set;
 
 @ServerEndpoint("/websocket")
 public class MessageWebSocket {
-    private static Set<Session> sessions = new HashSet<>();
+    private static final Set<Session> sessions = new HashSet<>();
 
     @OnOpen
     public void open(Session session) {
         sessions.add(session);
     }
 
+    /**
+     * Send message to all active WebSocket clients.
+     * @param message
+     */
     public static void sendMessage(String message) {
         for (Session session : sessions) {
             try {

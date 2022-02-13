@@ -4,14 +4,29 @@ import java.sql.*;
 import java.util.*;
 
 public abstract class DAO<T> {
+    /**
+     * Database connection credentials
+     */
     private final String jdbcURL = "jdbc:mysql://localhost:3306/webchat?createDatabaseIfNotExist=true";
     private final String jdbcUsername = "root";
     private final String jdbcPassword = "root";
 
+    // Table name in database
     private final String TABLE;
 
+    /**
+     * Converts received from database ResultSet to new object
+     * @param resultSet Received ResultSet
+     * @return New Object
+     */
     protected abstract T convertResult(ResultSet resultSet) throws SQLException;
-    protected abstract HashMap<String, Object> getInsertParams(T t);
+
+    /**
+     * Returns object properties that should be stored to the database
+     * @param object Object
+     * @return HashMap that contains object's properties names and their values
+     */
+    protected abstract HashMap<String, Object> getInsertParams(T object);
 
     protected DAO(String table) {
         this.TABLE = table;
@@ -28,6 +43,11 @@ public abstract class DAO<T> {
         return jdbcConnection;
     }
 
+    /**
+     * Returns object from database by it's id
+     * @param id Object id
+     * @return Found object or null if it doesn't exist
+     */
     public T findById(int id) {
         T result = null;
         Connection connection = getConnection();
@@ -47,6 +67,14 @@ public abstract class DAO<T> {
         return result;
     }
 
+
+    /**
+     * Returns all objects from database
+     *
+     * @param limit Maximum amount of objects
+     * @param orderBy Column name to order objects by
+     * @return Found objects
+     */
     public Set<T> getAll(int limit, String orderBy) {
         Set<T> result = new LinkedHashSet<>();
         Connection connection = getConnection();
@@ -66,6 +94,13 @@ public abstract class DAO<T> {
         return result;
     }
 
+    /**
+     * Returns one object by provided column and it's value
+     *
+     * @param column Column name
+     * @param value Column value
+     * @return Found object
+     */
     public T findOne(String column, String value) {
         T result = null;
         Connection connection = getConnection();
@@ -86,6 +121,11 @@ public abstract class DAO<T> {
         return result;
     }
 
+    /**
+     * Inserts new object to the database
+     * @param object Object to insert
+     * @return Inserted object
+     */
     public T insert(T object) {
         T result = null;
 
