@@ -1,7 +1,12 @@
 package com.trackensure.testtask.dao;
 
+import com.trackensure.testtask.exceptions.RecordNotFoundException;
+
 import java.sql.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public abstract class DAO<T> {
     /**
@@ -48,7 +53,7 @@ public abstract class DAO<T> {
      * @param id Object id
      * @return Found object or null if it doesn't exist
      */
-    public T findById(int id) {
+    public T findById(int id) throws RecordNotFoundException {
         T result = null;
         Connection connection = getConnection();
         String sql = String.format("SELECT * FROM %s WHERE `id` = ?", this.TABLE);
@@ -63,6 +68,9 @@ public abstract class DAO<T> {
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        if (result == null) {
+            throw new RecordNotFoundException();
         }
         return result;
     }
@@ -80,9 +88,8 @@ public abstract class DAO<T> {
         Connection connection = getConnection();
         String order = orderBy.isEmpty() ? "" : String.format( " ORDER BY %s", orderBy);
         String sql = String.format("SELECT * FROM `%s`%s LIMIT %d", this.TABLE, order, limit);
-        PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 result.add(convertResult(resultSet));
@@ -101,20 +108,19 @@ public abstract class DAO<T> {
      * @param value Column value
      * @return Found object
      */
-    public T findOne(String column, String value) {
+    public T findOne(String column, String value) throws RecordNotFoundException {
         T result = null;
         Connection connection = getConnection();
         String sql = String.format("SELECT * FROM %s WHERE %s = ?", TABLE, column);
-
-        PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setObject(1, value);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 result = convertResult(resultSet);
             }
             connection.close();
+            if (result == null) throw new RecordNotFoundException();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -153,7 +159,7 @@ public abstract class DAO<T> {
                 result = findById(id);
             }
             connection.close();
-        } catch (SQLException e) {
+        } catch (SQLException | RecordNotFoundException e) {
             e.printStackTrace();
         }
         return result;

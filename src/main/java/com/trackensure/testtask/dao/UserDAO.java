@@ -1,5 +1,6 @@
 package com.trackensure.testtask.dao;
 
+import com.trackensure.testtask.exceptions.RecordNotFoundException;
 import com.trackensure.testtask.model.User;
 
 import java.sql.ResultSet;
@@ -36,8 +37,10 @@ public class UserDAO extends DAO<User> {
      * @return Found or created user
      */
     public User createOrGetUserByName(String name) {
-        User result = findOne("name", name);
-        if (result == null) {
+        User result = null;
+        try {
+            result = findOne("name", name);
+        } catch (RecordNotFoundException e) {
             result = insert(new User(name));
         }
         return result;

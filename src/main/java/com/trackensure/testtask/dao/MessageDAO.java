@@ -1,5 +1,6 @@
 package com.trackensure.testtask.dao;
 
+import com.trackensure.testtask.exceptions.RecordNotFoundException;
 import com.trackensure.testtask.model.Message;
 import com.trackensure.testtask.model.User;
 
@@ -17,14 +18,18 @@ public class MessageDAO extends DAO<Message>{
     @Override
     protected Message convertResult(ResultSet resultSet) throws SQLException {
         UserDAO userDAO = new UserDAO();
-        User author = userDAO.findById(resultSet.getInt("user_id"));
-
-        return new Message(
-                resultSet.getInt("id"),
-                author,
-                resultSet.getString("text"),
-                resultSet.getTimestamp("sent_time")
+        try {
+            User author = userDAO.findById(resultSet.getInt("user_id"));
+            return new Message(
+                    resultSet.getInt("id"),
+                    author,
+                    resultSet.getString("text"),
+                    resultSet.getTimestamp("sent_time")
             );
+        } catch (RecordNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
