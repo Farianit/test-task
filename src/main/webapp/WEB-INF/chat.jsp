@@ -16,14 +16,12 @@
             <input class="form-control" type="submit" value="Refresh">
         </form>
         <div id="chat-box" class="p-1 mt-1">
-            <% for (Message message : (Set<Message>) request.getAttribute("messages")) { %>
-            <p><%=message.getAuthor().getName() + ": " + message.getText()%></p>
-            <% } %>
+
         </div>
         <form id="message-form" method="post" class="mt-2">
             <div class="row">
                 <div class="col-9">
-                    <input type="text" name="text" class="form-control">
+                    <input id="message-input" type="text" name="text" class="form-control">
                 </div>
                 <div class="col">
                     <input type="hidden" name="name" value="<%=request.getParameter("name")%>">
@@ -34,8 +32,9 @@
     </div>
 </div>
 <script>
-let websocketURL = "<%="ws://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/websocket"%>";
+    let websocketURL = "<%="ws://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/websocket"%>";
 </script>
-<script src="${pageContext.request.contextPath}/static/js/websocket.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="${pageContext.request.contextPath}/static/js/app.js"></script>
 </body>
 </html>

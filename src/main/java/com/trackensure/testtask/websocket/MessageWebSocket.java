@@ -21,7 +21,7 @@ public class MessageWebSocket {
 
     /**
      * Send message to all active WebSocket clients.
-     * @param message
+     * @param message Message text
      */
     public static void sendMessage(String message) {
         for (Session session : sessions) {
@@ -35,11 +35,21 @@ public class MessageWebSocket {
 
     @OnClose
     public void close(Session session) {
-        sessions.remove(session);
+        try {
+            session.close();
+            sessions.remove(session);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @OnError
-    public void onError(Throwable e){
-        e.printStackTrace();
+    public void onError(Session session, Throwable e) {
+        try {
+            session.close();
+            sessions.remove(session);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }
