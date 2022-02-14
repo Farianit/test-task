@@ -1,5 +1,8 @@
 package com.trackensure.testtask.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.sql.Timestamp;
 
 public class Message {
@@ -10,7 +13,8 @@ public class Message {
 
     private Timestamp sentTime;
 
-    public Message(int id, User author, String message, Timestamp sentTime) {
+    @JsonCreator
+    public Message(@JsonProperty("id") int id,@JsonProperty("author") User author,@JsonProperty("message") String message,@JsonProperty("sentTime") Timestamp sentTime) {
         this.id = id;
         this.author = author;
         this.text = message;

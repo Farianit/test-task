@@ -1,5 +1,8 @@
 package com.trackensure.testtask.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.sql.Timestamp;
 
 public class User {
@@ -8,7 +11,8 @@ public class User {
     private String name;
     private Timestamp createdTime;
 
-    public User(int id, String name, Timestamp createdTime) {
+    @JsonCreator
+    public User(@JsonProperty("id") int id,@JsonProperty("name") String name, @JsonProperty("createdTime") Timestamp createdTime) {
         this.id = id;
         this.name = name;
         this.createdTime = createdTime;
@@ -30,4 +34,7 @@ public class User {
         this.name = name;
     }
 
+    public Timestamp getCreatedTime() {
+        return createdTime;
+    }
 }
