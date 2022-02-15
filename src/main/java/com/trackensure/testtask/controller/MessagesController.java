@@ -27,6 +27,9 @@ public class MessagesController extends HttpServlet {
         if (name != null && text != null) {
             text = text.trim();
             sendMessage(name, text);
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+        } else {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
@@ -42,8 +45,10 @@ public class MessagesController extends HttpServlet {
             resp.setCharacterEncoding("UTF-8");
             out.print(messagesJSON);
             out.flush();
+            resp.setStatus(HttpServletResponse.SC_OK);
         } catch (IOException e) {
             e.printStackTrace();
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
