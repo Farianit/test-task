@@ -48,6 +48,7 @@ public abstract class DAO<T> {
             jdbcURL = properties.getProperty("URL");
             jdbcUsername = properties.getProperty("USER");
             jdbcPassword = properties.getProperty("PASSWORD");
+            LOGGER.info("Credentials were successfully read from file");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -59,6 +60,7 @@ public abstract class DAO<T> {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             jdbcConnection = DriverManager.getConnection(this.jdbcURL, this.jdbcUsername, this.jdbcPassword);
+            LOGGER.info("Connected successfully");
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -84,6 +86,7 @@ public abstract class DAO<T> {
                 result = convertResult(resultSet);
             }
             connection.close();
+            LOGGER.info("Query result was processed successfully");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -115,6 +118,7 @@ public abstract class DAO<T> {
                 result.add(convertResult(resultSet));
             }
             connection.close();
+            LOGGER.info("Query result was processed successfully");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -140,6 +144,7 @@ public abstract class DAO<T> {
             while (resultSet.next()) {
                 result = convertResult(resultSet);
             }
+            LOGGER.info("Query executed successfully");
             connection.close();
             if (result == null) throw new RecordNotFoundException();
         } catch (SQLException e) {
@@ -180,6 +185,7 @@ public abstract class DAO<T> {
                 result = findById(id);
             }
             connection.close();
+            LOGGER.info("Inserted successfully, ID: " + result);
         } catch (SQLException | RecordNotFoundException e) {
             e.printStackTrace();
         }

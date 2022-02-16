@@ -74,8 +74,9 @@ public class MessagesController extends HttpServlet {
         Message newMessage = new Message(author, text);
         LOGGER.info("Inserting new message");
         newMessage = messageDAO.insert(newMessage);
-
+        LOGGER.info("Message inserted successfully");
         try {
+            LOGGER.info("Sending new message via WebSocket");
             String messageJSON = new ObjectMapper().writeValueAsString(newMessage);
             MessageWebSocket.sendMessage(messageJSON);
         } catch (JsonProcessingException e) {

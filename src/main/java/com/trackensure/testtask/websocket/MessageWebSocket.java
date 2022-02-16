@@ -21,6 +21,7 @@ public class MessageWebSocket {
     public void open(Session session) {
         LOGGER.info("Opening new websocket session");
         SESSIONS.add(session);
+        LOGGER.info("WebSocket session opened successfully");
     }
 
     /**
@@ -32,6 +33,7 @@ public class MessageWebSocket {
         for (Session session : SESSIONS) {
             try {
                 session.getBasicRemote().sendText(message);
+                LOGGER.info("WebSocket message sent successfully");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -44,6 +46,7 @@ public class MessageWebSocket {
         try {
             session.close();
             SESSIONS.remove(session);
+            LOGGER.info("WebSocket session closed successfully");
         } catch (IOException e) {
             e.printStackTrace();
         }

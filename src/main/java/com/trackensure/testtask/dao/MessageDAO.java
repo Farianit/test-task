@@ -1,6 +1,5 @@
 package com.trackensure.testtask.dao;
 
-import com.trackensure.testtask.exceptions.RecordNotFoundException;
 import com.trackensure.testtask.model.Message;
 import com.trackensure.testtask.model.User;
 
