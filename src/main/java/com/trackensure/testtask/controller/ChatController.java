@@ -11,7 +11,7 @@ import java.io.IOException;
 @WebServlet("/chat")
 public class ChatController extends HttpServlet {
 
-    private final String PAGE = "/WEB-INF/chat.jsp";
+    private final String PAGE = "/chat.jsp";
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
