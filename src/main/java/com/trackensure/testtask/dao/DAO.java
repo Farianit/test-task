@@ -22,6 +22,8 @@ public abstract class DAO<T> {
     // Table name in database
     private final String TABLE;
 
+    protected abstract String getSelectQuery();
+
     /**
      * Converts received from database ResultSet to new object
      * @param resultSet Received ResultSet
@@ -71,7 +73,7 @@ public abstract class DAO<T> {
     public T findById(int id) throws RecordNotFoundException {
         T result = null;
         Connection connection = getConnection();
-        String sql = String.format("SELECT * FROM %s WHERE `id` = ?", this.TABLE);
+        String sql = String.format("%s WHERE %s.id = ?", this.getSelectQuery(), this.TABLE);
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
@@ -103,7 +105,7 @@ public abstract class DAO<T> {
         Set<T> result = new LinkedHashSet<>();
         Connection connection = getConnection();
         String order = orderBy.isEmpty() ? "" : String.format( " ORDER BY %s", orderBy);
-        String sql = String.format("SELECT * FROM `%s`%s LIMIT %d", this.TABLE, order, limit);
+        String sql = String.format("%s %s LIMIT %s", this.getSelectQuery(), order, limit);
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             LOGGER.info(String.format("Executing %s query", sql));
@@ -129,7 +131,7 @@ public abstract class DAO<T> {
     public T findOne(String column, String value) throws RecordNotFoundException {
         T result = null;
         Connection connection = getConnection();
-        String sql = String.format("SELECT * FROM %s WHERE %s = ?", TABLE, column);
+        String sql = String.format("%s WHERE %s = ?", this.getSelectQuery(), column);
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setObject(1, value);

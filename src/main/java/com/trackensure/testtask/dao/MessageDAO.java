@@ -10,26 +10,26 @@ import java.util.HashMap;
 
 public class MessageDAO extends DAO<Message>{
     private static final String TABLE = "messages";
+    private static final String SELECT_QUERY = "SELECT messages.id AS message_id, messages.text AS message_text, messages.sent_time AS message_sent_time, users.id AS user_id, users.name AS user_name, users.created_time AS user_created_time FROM messages INNER JOIN users ON messages.user_id = users.id";
 
     public MessageDAO() {
         super(TABLE);
     }
 
     @Override
-    protected Message convertResult(ResultSet resultSet) throws SQLException {
-        UserDAO userDAO = new UserDAO();
-        try {
-            User author = userDAO.findById(resultSet.getInt("user_id"));
-            return new Message(
-                    resultSet.getInt("id"),
-                    author,
-                    resultSet.getString("text"),
-                    resultSet.getTimestamp("sent_time")
-            );
-        } catch (RecordNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+    protected String getSelectQuery() {
+        return SELECT_QUERY;
+    }
+
+    @Override
+    protected Message convertResult(ResultSet rs) throws SQLException {
+        User author = new User(rs.getInt("user_id"), rs.getString("user_name"), rs.getTimestamp("user_created_time"));
+        return new Message(
+                rs.getInt("message_id"),
+                author,
+                rs.getString("message_text"),
+                rs.getTimestamp("message_sent_time")
+        );
     }
 
     @Override

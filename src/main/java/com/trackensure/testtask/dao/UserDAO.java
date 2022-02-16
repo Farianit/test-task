@@ -8,10 +8,17 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 public class UserDAO extends DAO<User> {
-    public static final String TABLE = "users";
+    private static final String TABLE = "users";
+    private static final String SELECT_QUERY = "SELECT * FROM `users`";
+
 
     public UserDAO() {
         super(TABLE);
+    }
+
+    @Override
+    protected String getSelectQuery() {
+        return SELECT_QUERY;
     }
 
     @Override
