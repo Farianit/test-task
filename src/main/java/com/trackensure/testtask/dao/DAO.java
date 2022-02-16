@@ -2,19 +2,18 @@ package com.trackensure.testtask.dao;
 
 import com.trackensure.testtask.exceptions.RecordNotFoundException;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public abstract class DAO<T> {
     /**
      * Database connection credentials
      */
-    private final String jdbcURL = "jdbc:mysql://localhost:3306/webchat?createDatabaseIfNotExist=true";
-    private final String jdbcUsername = "root";
-    private final String jdbcPassword = "root";
+    private String jdbcURL;
+    private String jdbcUsername;
+    private String jdbcPassword;
 
     // Table name in database
     private final String TABLE;
@@ -35,6 +34,16 @@ public abstract class DAO<T> {
 
     protected DAO(String table) {
         this.TABLE = table;
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("database.properties")) {
+            Properties properties = new Properties();
+            properties.load(input);
+
+            jdbcURL = properties.getProperty("URL");
+            jdbcUsername = properties.getProperty("USER");
+            jdbcPassword = properties.getProperty("PASSWORD");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     protected Connection getConnection() {
@@ -57,9 +66,8 @@ public abstract class DAO<T> {
         T result = null;
         Connection connection = getConnection();
         String sql = String.format("SELECT * FROM %s WHERE `id` = ?", this.TABLE);
-        PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -143,9 +151,8 @@ public abstract class DAO<T> {
         String sql = String.format("INSERT INTO %s(%s) VALUES (%s)", TABLE, columns, values);
 
         Connection connection = getConnection();
-        PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             int i = 1;
             for (Object value : insertParams.values()) {
                 preparedStatement.setObject(i, value);
