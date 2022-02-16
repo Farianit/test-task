@@ -15,30 +15,38 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Set;
+import java.util.logging.Logger;
 
 @WebServlet("/messages")
 public class MessagesController extends HttpServlet {
 
+    private static final Logger LOGGER = Logger.getLogger(MessagesController.class.getName());
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+        LOGGER.info("Received POST request to /messages, getting parameters.");
         String name = req.getParameter("name");
         String text = req.getParameter("text");
 
         if (name != null && text != null) {
             text = text.trim();
+            LOGGER.info(String.format("Saving new message: name='%s' text='%s'", name, text));
             sendMessage(name, text);
             resp.setStatus(HttpServletResponse.SC_CREATED);
         } else {
+            LOGGER.info(String.format("Wrong request parameters: name='%s' text='%s'", name, text));
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+        LOGGER.info("Received GET request to /messages, getting messages from database");
         // Get last 50 messages from database
         MessageDAO messageDAO = new MessageDAO();
         Set<Message> messages = messageDAO.getAll(50, "sent_time DESC");
         try {
+            LOGGER.info("Converting received messages to JSON and sending in response");
             String messagesJSON = new ObjectMapper().writeValueAsString(messages);
             PrintWriter out = resp.getWriter();
             resp.setContentType("application/json");
@@ -59,10 +67,12 @@ public class MessagesController extends HttpServlet {
      */
     public void sendMessage(String name, String text) {
         UserDAO userDAO = new UserDAO();
+        LOGGER.info("Getting message author id from database");
         User author = userDAO.createOrGetUserByName(name);
 
         MessageDAO messageDAO = new MessageDAO();
         Message newMessage = new Message(author, text);
+        LOGGER.info("Inserting new message");
         newMessage = messageDAO.insert(newMessage);
 
         try {

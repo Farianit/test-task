@@ -1,5 +1,6 @@
 package com.trackensure.testtask.websocket;
 
+import com.trackensure.testtask.controller.MessagesController;
 import jakarta.websocket.OnClose;
 import jakarta.websocket.OnError;
 import jakarta.websocket.OnOpen;
@@ -9,14 +10,17 @@ import jakarta.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 @ServerEndpoint("/websocket")
 public class MessageWebSocket {
-    private static final Set<Session> sessions = new HashSet<>();
+    private static final Logger LOGGER = Logger.getLogger(MessagesController.class.getName());
+    private static final Set<Session> SESSIONS = new HashSet<>();
 
     @OnOpen
     public void open(Session session) {
-        sessions.add(session);
+        LOGGER.info("Opening new websocket session");
+        SESSIONS.add(session);
     }
 
     /**
@@ -24,7 +28,8 @@ public class MessageWebSocket {
      * @param message Message text
      */
     public static void sendMessage(String message) {
-        for (Session session : sessions) {
+        LOGGER.info(String.format("Sending message '%s' via WebSocket", message));
+        for (Session session : SESSIONS) {
             try {
                 session.getBasicRemote().sendText(message);
             } catch (IOException e) {
@@ -35,9 +40,10 @@ public class MessageWebSocket {
 
     @OnClose
     public void close(Session session) {
+        LOGGER.info("Closing WebSocket session");
         try {
             session.close();
-            sessions.remove(session);
+            SESSIONS.remove(session);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,11 +51,7 @@ public class MessageWebSocket {
 
     @OnError
     public void onError(Session session, Throwable e) {
-        try {
-            session.close();
-            sessions.remove(session);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        close(session);
+        SESSIONS.remove(session);
     }
 }

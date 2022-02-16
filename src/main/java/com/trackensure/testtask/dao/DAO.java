@@ -1,13 +1,17 @@
 package com.trackensure.testtask.dao;
 
+import com.trackensure.testtask.controller.MessagesController;
 import com.trackensure.testtask.exceptions.RecordNotFoundException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Logger;
 
 public abstract class DAO<T> {
+    private static final Logger LOGGER = Logger.getLogger(MessagesController.class.getName());
+
     /**
      * Database connection credentials
      */
@@ -34,6 +38,7 @@ public abstract class DAO<T> {
 
     protected DAO(String table) {
         this.TABLE = table;
+        LOGGER.info("Reading database connection credentials from database.properties");
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("database.properties")) {
             Properties properties = new Properties();
             properties.load(input);
@@ -47,6 +52,7 @@ public abstract class DAO<T> {
     }
 
     protected Connection getConnection() {
+        LOGGER.info("Connecting to database");
         Connection jdbcConnection = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -69,7 +75,9 @@ public abstract class DAO<T> {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
+            LOGGER.info(String.format("Executing %s query", sql));
             ResultSet resultSet = preparedStatement.executeQuery();
+            LOGGER.info("Query executed, processing received data");
             while (resultSet.next()) {
                 result = convertResult(resultSet);
             }
@@ -98,7 +106,9 @@ public abstract class DAO<T> {
         String sql = String.format("SELECT * FROM `%s`%s LIMIT %d", this.TABLE, order, limit);
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            LOGGER.info(String.format("Executing %s query", sql));
             ResultSet resultSet = preparedStatement.executeQuery();
+            LOGGER.info("Query executed, processing received data");
             while (resultSet.next()) {
                 result.add(convertResult(resultSet));
             }
@@ -123,6 +133,7 @@ public abstract class DAO<T> {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setObject(1, value);
+            LOGGER.info(String.format("Executing %s query", sql));
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 result = convertResult(resultSet);
@@ -158,6 +169,7 @@ public abstract class DAO<T> {
                 preparedStatement.setObject(i, value);
                 i++;
             }
+            LOGGER.info(String.format("Executing %s query", sql));
             preparedStatement.executeUpdate();
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
